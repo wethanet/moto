@@ -203,8 +203,11 @@ class SNSBackend(BaseBackend):
             topic = self.get_topic(arn)
             message_id = topic.publish(message)
         except SNSNotFoundError:
-            endpoint = self.get_endpoint(arn)
-            message_id = endpoint.publish(message)
+            try:
+                endpoint = self.get_endpoint(arn)
+                message_id = endpoint.publish(message)
+            except:
+                message_id = six.text_type(uuid.uuid4())
         return message_id
 
     def create_platform_application(self, region, name, platform, attributes):
